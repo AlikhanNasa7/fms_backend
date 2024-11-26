@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Farm, FarmRank
+from .models import Farm, FarmRank, FarmAnalytics
 
 @admin.register(Farm)
 class AdminFarm(admin.ModelAdmin):
@@ -10,3 +10,7 @@ class AdminFarm(admin.ModelAdmin):
 class AdminFarmRank(admin.ModelAdmin):
     pass
 
+
+@admin.register(FarmAnalytics)
+class AdminFarmAnalytics(admin.ModelAdmin):
+    pass

@@ -143,3 +143,7 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
     'USER_ID_FIELD': "user_id"
 }
+
+ALLOWED_HOSTS = [
+    '*'
+]
