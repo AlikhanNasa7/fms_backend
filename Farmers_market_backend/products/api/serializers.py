@@ -6,7 +6,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
-        read_only_fields = ['farm_id', 'product_id', 'farmer_id']
+        read_only_fields = ['product_id', 'updated_at']
 
 
 class CategorySerializer(serializers.ModelSerializer):

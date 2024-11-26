@@ -13,6 +13,8 @@ from rest_framework import viewsets
 from .serializers import ProfileSerializer, FarmerSerializer, BuyerSerializer
 from users.models import Farmer, Buyer
 from rest_framework import mixins
+from rest_framework_simplejwt.views import TokenRefreshView
+
 
 class MyTokenObtainSerializer(TokenObtainPairSerializer):
 
@@ -38,23 +40,52 @@ class MyTokenObtainView(TokenObtainPairView):
         refresh_token = serializer.validated_data["refresh"]
         access_token = serializer.validated_data["access"]
 
-        response = Response({"success": "Login successful"}, status=status.HTTP_200_OK)
+        response = Response({"success": "Login successful", "access": access_token}, status=status.HTTP_200_OK)
         response.set_cookie(
             key="access_token",
             value=access_token,
             httponly=True,
             secure=True,
-            samesite='Lax'
+            samesite='None'
         )
         response.set_cookie(
             key="refresh_token",
             value=refresh_token,
             httponly=True,
             secure=True,
-            samesite='Lax'
+            samesite='None'
         )
         return response
 
+class CustomTokenRefreshView(TokenRefreshView):
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except InvalidToken as e:
+            return Response({'error': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+
+        refresh_token = serializer.validated_data.get('refresh')
+        access_token = serializer.validated_data.get('access')
+
+        response = Response({'access': access_token, "refresh": refresh_token}, status=status.HTTP_200_OK)
+
+        response.set_cookie(
+            key="access_token",
+            value=access_token,
+            httponly=True,
+            secure=True,
+            samesite='None'
+        )
+
+        response.set_cookie(
+            key='refresh_token',
+            value=refresh_token,
+            httponly=True,
+            secure=False,
+            samesite='Lax',
+        )
+        return response
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -141,8 +172,8 @@ class ProfileViewset(viewsets.ModelViewSet):
             serializer = FarmerSerializer(user, data=request.data, partial=True)
         elif user.role == 'buyer':
             serializer = BuyerSerializer(user, data=request.data, partial=True)
-        else:
-            serializer = AdminSerializer(user, data=request.data, partial=True)
+        # else:
+        #     serializer = AdminSerializer(user, data=request.data, partial=True)
         
         if serializer.is_valid():
             serializer.save()

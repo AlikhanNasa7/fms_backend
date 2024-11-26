@@ -42,7 +42,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(product, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"success": "Product was changes"}, status=status.HTTP_202_ACCEPTED)
+            return Response({"success": "Product was changed"}, status=status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # updating product partially

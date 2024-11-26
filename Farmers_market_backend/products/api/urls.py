@@ -7,6 +7,7 @@ router = DefaultRouter()
 
 # Register the viewset with the router
 # This will generate routes for ProductViewSet actions
+# /products/
 router.register(r'', ProductViewSet, basename='product')
 
 # Include the router-generated URLs
