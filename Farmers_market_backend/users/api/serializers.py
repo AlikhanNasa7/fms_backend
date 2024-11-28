@@ -7,19 +7,21 @@ from users.models import Farmer, Buyer, CustomUser
 #         fields = ['password']
 
 class ProfileSerializer(serializers.ModelSerializer):
-    # profile_data = serializers.SerializerMethodField()
-
     class Meta: 
         model = CustomUser
-        exclude = ["password"]
+        fields = ['username', 'email', 'role']
     
-    def get_profile_data(self, obj):
-        if obj.role == "farmer":
-            return FarmerSerializer(obj).data
-        elif obj.role=="buyer": 
-            return BuyerSerializer(obj).data
-        # else:
-        #     return AdminSerializer(obj).data
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        if instance.role == 'Farmer':
+            representation['profile'] = FarmerSerializer(instance.farmer_profile).data
+        elif instance.role == 'Buyer':
+            representation['profile'] = BuyerSerializer(instance.buyer_profile).data
+        else:
+            representation['profile'] = None  # Fallback for unknown roles or missing profiles
+
+        return representation
 
 
 class FarmerSerializer(serializers.ModelSerializer):

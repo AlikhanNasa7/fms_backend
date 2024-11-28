@@ -1,0 +1,658 @@
+openapi: 3.0.3
+info:
+  title: Farmers Market API
+  version: 1.0.0
+  description: Your project description
+paths:
+  /products/:
+    get:
+      operationId: products_list
+      tags:
+      - products
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+          description: ''
+    post:
+      operationId: products_create
+      tags:
+      - products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Product'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Product'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
+  /products/{product_id}/:
+    get:
+      operationId: products_retrieve
+      parameters:
+      - in: path
+        name: product_id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this product.
+        required: true
+      tags:
+      - products
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
+    put:
+      operationId: products_update
+      parameters:
+      - in: path
+        name: product_id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this product.
+        required: true
+      tags:
+      - products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Product'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Product'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
+    patch:
+      operationId: products_partial_update
+      parameters:
+      - in: path
+        name: product_id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this product.
+        required: true
+      tags:
+      - products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProduct'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProduct'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProduct'
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
+    delete:
+      operationId: products_destroy
+      parameters:
+      - in: path
+        name: product_id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this product.
+        required: true
+      tags:
+      - products
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /products/{product_id}/update-stock/:
+    patch:
+      operationId: products_update_stock_partial_update
+      parameters:
+      - in: path
+        name: product_id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this product.
+        required: true
+      tags:
+      - products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProduct'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProduct'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProduct'
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
+  /products/low-stock/:
+    get:
+      operationId: products_low_stock_retrieve
+      tags:
+      - products
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
+  /products/search/:
+    get:
+      operationId: products_search_retrieve
+      tags:
+      - products
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
+  /user/buyers/:
+    get:
+      operationId: user_buyers_list
+      tags:
+      - user
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Buyer'
+          description: ''
+  /user/farmers/:
+    get:
+      operationId: user_farmers_list
+      tags:
+      - user
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Farmer'
+          description: ''
+  /user/login/:
+    post:
+      operationId: user_login_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MyTokenObtain'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MyTokenObtain'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MyTokenObtain'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MyTokenObtain'
+          description: ''
+  /user/logout/:
+    post:
+      operationId: user_logout_create
+      tags:
+      - user
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /user/profile/:
+    get:
+      operationId: user_profile_retrieve
+      tags:
+      - user
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: ''
+    put:
+      operationId: user_profile_update
+      tags:
+      - user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Profile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Profile'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: ''
+  /user/refresh-token/:
+    post:
+      operationId: user_refresh_token_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /user/register/:
+    post:
+      operationId: user_register_create
+      tags:
+      - user
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+components:
+  schemas:
+    Buyer:
+      type: object
+      properties:
+        user:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        preferred_categories:
+          nullable: true
+        default_delivery_address:
+          type: string
+          nullable: true
+        total_spent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - first_name
+      - last_name
+      - updated_at
+      - user
+    Farmer:
+      type: object
+      properties:
+        user:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        years_of_experience:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        specialization:
+          type: string
+          nullable: true
+          maxLength: 255
+        certification_details:
+          type: string
+          nullable: true
+        total_farm_area:
+          type: number
+          format: double
+          nullable: true
+        average_performance:
+          type: number
+          format: double
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - first_name
+      - last_name
+      - updated_at
+      - user
+    MyTokenObtain:
+      type: object
+      properties:
+        email:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - password
+    PatchedProduct:
+      type: object
+      properties:
+        product_id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        unit_name:
+          $ref: '#/components/schemas/UnitNameEnum'
+        quantity:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        description:
+          type: string
+          nullable: true
+        image_urls:
+          nullable: true
+        is_available:
+          type: boolean
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        farm_id:
+          type: string
+          format: uuid
+        category:
+          type: string
+        subcategory:
+          type: string
+    Product:
+      type: object
+      properties:
+        product_id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        unit_name:
+          $ref: '#/components/schemas/UnitNameEnum'
+        quantity:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        description:
+          type: string
+          nullable: true
+        image_urls:
+          nullable: true
+        is_available:
+          type: boolean
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        farm_id:
+          type: string
+          format: uuid
+        category:
+          type: string
+        subcategory:
+          type: string
+      required:
+      - category
+      - created_at
+      - farm_id
+      - name
+      - price
+      - product_id
+      - quantity
+      - subcategory
+      - updated_at
+    Profile:
+      type: object
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        last_login:
+          type: string
+          format: date-time
+          nullable: true
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        username:
+          type: string
+          maxLength: 20
+        first_name:
+          type: string
+          maxLength: 25
+        last_name:
+          type: string
+          maxLength: 25
+        is_active:
+          type: boolean
+        is_staff:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        phone_number:
+          type: string
+          nullable: true
+          maxLength: 15
+        image:
+          type: string
+          format: uri
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        groups:
+          type: array
+          items:
+            type: integer
+          description: The groups this user belongs to. A user will get all permissions
+            granted to each of their groups.
+        user_permissions:
+          type: array
+          items:
+            type: integer
+          description: Specific permissions for this user.
+      required:
+      - created_at
+      - email
+      - role
+      - updated_at
+    RoleEnum:
+      enum:
+      - Farmer
+      - Buyer
+      type: string
+      description: |-
+        * `Farmer` - Farmer
+        * `Buyer` - Buyer
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+    UnitNameEnum:
+      enum:
+      - kg
+      - pcs
+      - litres
+      type: string
+      description: |-
+        * `kg` - kg
+        * `pcs` - pcs
+        * `litres` - litres
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

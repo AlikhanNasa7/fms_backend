@@ -14,10 +14,9 @@ from .serializers import ProfileSerializer, FarmerSerializer, BuyerSerializer
 from users.models import Farmer, Buyer
 from rest_framework import mixins
 from rest_framework_simplejwt.views import TokenRefreshView
-
+from drf_spectacular.utils import extend_schema
 
 class MyTokenObtainSerializer(TokenObtainPairSerializer):
-
 
     @classmethod
     def get_token(cls, user):
@@ -92,10 +91,11 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'phone_number', 'password']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ['username', 'email','first_name', 'last_name','role', 'phone_number', 'password']
+        #extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
+        print(validated_data)
         user = CustomUser(
             email=validated_data['email'],
             username=validated_data.get('username', ''),
@@ -104,13 +104,23 @@ class RegisterSerializer(serializers.ModelSerializer):
             phone_number=validated_data.get('phone_number', ''),
             role=validated_data.get('role'),
         )
-        user.set_password(validated_data.password)
+        user.set_password(validated_data['password'])
         user.save()
         return user
 
 
 class RegisterView(APIView):
+    @extend_schema(
+        summary="User Registration",
+        description="Endpoint to register a new user. Provide a username, email, and password to create an account.",
+        request=RegisterSerializer,
+        responses={
+            201: "User created successfully.",
+            400: "Invalid input data.",
+        },
+    )
     def post(self, request):
+        print(request.data)
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
@@ -163,6 +173,7 @@ class ProfileViewset(viewsets.ModelViewSet):
 
         user = request.user
         serializer = self.get_serializer(user)
+        print(serializer)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def update(self, request):

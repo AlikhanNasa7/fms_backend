@@ -28,21 +28,22 @@ class UserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, max_length=36)
     email = models.EmailField(unique=True)
-    username = models.CharField(max_length=20, blank=True, unique=True)
+    username = models.CharField(max_length=50, blank=True, unique=True)
     first_name = models.CharField(max_length=25, blank=True)
     last_name = models.CharField(max_length=25, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
     image = models.ImageField(blank=True, upload_to='images/users/')
-    password = models.CharField(max_length=25, null=False)
+    password = models.CharField(max_length=255, null=False)
 
 
     ROLE_CHOICES = [
         ('Farmer', 'Farmer'),
         ('Buyer', 'Buyer'),
+        ('Admin', 'Admin'),
     ]
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     objects = UserManager()
@@ -68,7 +69,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 #         return f"Admin: {self.user.username}"
 
 class Farmer(models.Model):
-    user = models.OneToOneField('users.CustomUser', models.CASCADE, primary_key=True)
+    user = models.OneToOneField('users.CustomUser', models.CASCADE, primary_key=True, related_name="farmer_profile")
     years_of_experience = models.IntegerField(default=1)
     specialization = models.CharField(max_length=255, blank=True, null=True)
     certification_details = models.TextField(blank=True, null=True)
@@ -85,6 +86,7 @@ class Buyer(models.Model):
         CustomUser,
         on_delete=models.CASCADE,
         primary_key=True,
+        related_name="buyer_profile"
     )
     preferred_categories = models.JSONField(blank=True, null=True)
     default_delivery_address = models.TextField(blank=True, null=True)

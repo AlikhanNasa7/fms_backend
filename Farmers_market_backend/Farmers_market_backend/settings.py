@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'orders',
     'rest_framework',
     'rest_framework_simplejwt',
+    'drf_spectacular',
     'corsheaders',
 ]
 
@@ -140,14 +141,23 @@ REST_FRAMEWORK = {
     ),
     'SIMPLE_PERMISSION_CLASSES' : (
         'rest_framework.permissions.IsAuthenticated',
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'USER_ID_FIELD': "user_id"
+}
+
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Farmers Market API',
+    'DESCRIPTION': 'Your project description',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
 }
