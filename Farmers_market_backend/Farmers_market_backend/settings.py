@@ -1,7 +1,7 @@
 import pymysql
 from datetime import timedelta
-import os
-from dotenv import load_dotenv
+
+pymysql.install_as_MySQLdb()
 
 from pathlib import Path
 
@@ -172,3 +172,21 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'farmers.market.swe@gmail.com'
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = 'farmers.market.swe@gmail.com'
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+AWS_REGION_NAME = os.getenv('AWS_REGION_NAME')
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+
+MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_REGION_NAME}.amazonaws.com/'
+
+
+AWS_S3_FILE_OVERWRITE = False 
+AWS_DEFAULT_ACL = None 
+
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

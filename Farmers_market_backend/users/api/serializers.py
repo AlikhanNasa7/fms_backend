@@ -4,7 +4,7 @@ from pip._vendor.requests.models import Response
 from rest_framework import serializers
 
 from users.models import Farmer, Buyer, CustomUser
-
+from market.models import Farm
 # class AdminSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = Admin
@@ -31,9 +31,16 @@ class ProfileSerializer(serializers.ModelSerializer):
 class FarmerSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
+    #rank = serializers.FloatField()
+
     class Meta:
         model = Farmer
         fields = "__all__"
+
+    def get_rank(self, obj):
+        user = obj.pk
+        farms = Farm.obj
+
 
 
 class BuyerSerializer(serializers.ModelSerializer):
