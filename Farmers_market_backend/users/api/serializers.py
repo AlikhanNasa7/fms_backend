@@ -1,4 +1,8 @@
+import datetime
+from django.contrib.auth.models import User
+from pip._vendor.requests.models import Response
 from rest_framework import serializers
+
 from users.models import Farmer, Buyer, CustomUser
 
 # class AdminSerializer(serializers.ModelSerializer):
@@ -38,3 +42,5 @@ class BuyerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Buyer
         fields = "__all__"
+
+
