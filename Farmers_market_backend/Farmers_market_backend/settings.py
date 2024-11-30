@@ -1,8 +1,10 @@
 import pymysql
 from datetime import timedelta
-
+import os
+from dotenv import load_dotenv
 pymysql.install_as_MySQLdb()
 
+load_dotenv()
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
