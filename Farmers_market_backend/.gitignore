@@ -1,3 +1,57 @@
-.venv
-.env
+# Python Bytecode Files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django
+*.log
+*.pot
+*.pyc
+*.pyo
+*.db
+*.sqlite3
 db.sqlite3
+media/
+static/
+
+# Virtual Environment
+.venv/
+env/
+venv/
+
+# Django migrations
+migrations/
+
+# Local development environment configuration
+*.env
+*.env.*
+
+# PyCharm, VSCode, and other IDEs
+.idea/
+.vscode/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Sphinx documentation
+docs/_build/
+
+# Test coverage reports
+.coverage
+*.cover
+*.coverage.*
+nosetests.xml
+coverage.xml
+*.log
+
+# mypy
+.mypy_cache/
+
+# Pylint
+.pylint.d/
+
+# VS Code settings folder
+.vscode/
+
+# Local settings file (contains secrets like Django's SECRET_KEY)
+local_settings.py
