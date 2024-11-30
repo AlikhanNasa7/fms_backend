@@ -10,7 +10,7 @@ from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from users.models import CustomUser
 from .permissions import IsFarmer, IsBuyer
 from rest_framework import viewsets
-from .serializers import ProfileSerializer, FarmerSerializer, BuyerSerializer
+from .serializers import ProfileSerializer, FarmerSerializer, BuyerSerializer, RegisterSerializer, FarmerFilter
 from users.models import Farmer, Buyer
 from rest_framework import mixins
 from rest_framework_simplejwt.views import TokenRefreshView
@@ -22,6 +22,11 @@ from django.conf import settings
 from rest_framework import status
 from datetime import datetime as dt
 import datetime
+SECRET_KEY = settings.SECRET_KEY
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.renderers import JSONRenderer
+
+
 
 class MyTokenObtainSerializer(TokenObtainPairSerializer):
 
@@ -94,28 +99,6 @@ class CustomTokenRefreshView(TokenRefreshView):
             samesite='Lax',
         )
         return response
-
-class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = CustomUser
-        fields = ['username', 'email','first_name', 'last_name','role', 'phone_number', 'password']
-        #extra_kwargs = {'password': {'write_only': True}}
-
-    def create(self, validated_data):
-        print(validated_data)
-        user = CustomUser(
-            email=validated_data['email'],
-            username=validated_data.get('username', ''),
-            first_name=validated_data['first_name'],
-            last_name=validated_data['last_name'],
-            phone_number=validated_data.get('phone_number', ''),
-            role=validated_data.get('role'),
-        )
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
 
 
 class RegisterView(APIView):
@@ -200,11 +183,14 @@ class ProfileViewset(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-class FarmersViewset(mixins.ListModelMixin, 
-                    mixins.RetrieveModelMixin, 
-                    viewsets.GenericViewSet):
+class FarmersViewset(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = Farmer.objects.all()
     serializer_class = FarmerSerializer
+    filter_backends = (DjangoFilterBackend,)  # Enable Django filter
+    filterset_class = FarmerFilter  # Apply the FarmerFilter
+    search_fields = ['specialization']
+    ordering_fields = ['years_of_experience', 'total_farm_area', 'average_performance']
+    # renderer_classes = [JSONRenderer]
 
 class BuyerViewset(mixins.ListModelMixin, 
                    mixins.RetrieveModelMixin, 
@@ -213,14 +199,8 @@ class BuyerViewset(mixins.ListModelMixin,
     serializer_class = BuyerSerializer
 
 
-
-SECRET_KEY = settings.SECRET_KEY
-
 RESET_PASSWORD_URL = "http://127.0.0.1:8000/api/reset-password/"
 
-# {
-#     "email": "alihannashtaj@gmail.com"
-# }
 
 class PasswordResetRequestView(APIView):
     def post(self, request, *args, **kwargs):
@@ -318,4 +298,3 @@ class PasswordResetView(APIView):
 
         # Return success response
         return Response({"message": "Password has been successfully updated.", "UTC_NOW":dt.utcnow().isoformat(), "Expiration date":dt.utcfromtimestamp(decoded_data.get("exp")).isoformat()}, status=status.HTTP_200_OK)
-
