@@ -16,10 +16,10 @@ class SubCategory(models.Model):
 
 class Product(models.Model):
     product_id = models.UUIDField(primary_key=True, default=uuid.uuid4, max_length=36)
-    farm_id = models.ForeignKey(Farm, models.CASCADE)
-    category = models.ForeignKey(Category, models.DO_NOTHING)
-    subcategory = models.ForeignKey(SubCategory, models.DO_NOTHING)
-    name = models.CharField(max_length=255)
+    farm_id = models.ForeignKey(Farm, models.CASCADE, related_name="products")
+    category = models.ForeignKey(Category, models.DO_NOTHING, related_name="products")
+    subcategory = models.ForeignKey(SubCategory, models.DO_NOTHING, related_name="products")
+    name = models.CharField(max_length=255)          
     price = models.DecimalField(max_digits=10, decimal_places=2)
     unit_name = models.CharField(max_length=20, choices=[
         ('kg', 'kg'),
@@ -28,7 +28,7 @@ class Product(models.Model):
     ], default='kg')
     quantity = models.PositiveIntegerField()
     description = models.TextField(null=True)
-    image_urls = models.JSONField(blank=True, null=True)
+    image_urls = models.JSONField(default=list, blank=True, null=True)
     is_available = models.BooleanField(blank=True, null=True, default=True)
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(default=timezone.now)

@@ -1,22 +1,23 @@
 from rest_framework import viewsets, status
 from django.shortcuts import get_object_or_404
 from products.models import Product, Category
-from .serializers import ProductSerializer, CategorySerializer
+from .serializers import ProductSerializer, CategorySerializer, ProductFilter
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.renderers import JSONRenderer
+from rest_framework import mixins
 
 
-class ProductViewSet(viewsets.ModelViewSet):
+
+class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-
-    # getting the list of products
-    # route = GET products/
-    def list(self, request):
-        products = self.get_queryset()
-        serializer = self.get_serializer(products, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    filter_backends = (DjangoFilterBackend,)  # Enable Django filter
+    filterset_class = ProductFilter  # Apply the ProductFilter
+    search_fields = ['name', 'description']
+    ordering_fields = ['price_min', 'price_max', 'quantity_min', 'quantity_max', 'category', 'subcategory']
 
     # creating a product
     # route = POST products/
@@ -45,6 +46,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             return Response({"success": "Product was changed"}, status=status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # Где это работает?
     # updating product partially
     # route = PATCH products/<id>
     def partial_update(self, request, pk=None):
@@ -58,7 +60,6 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     # deleting a product
     # route = DELETE products/<id>
-
     def destroy(self, request, pk=None):
 
         product = get_object_or_404(Product, pk=pk)
@@ -83,21 +84,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         low_stock_products = Product.objects.filter(quantity__lte=threshold)
         serializer = self.get_serializer(low_stock_products, many=True)
         return Response(serializer.data)
-
-    @action(detail=False, methods=['get'], url_path='search')
-    def search(self, request):
-        search = request.query_params.get("search", "")
-        if search:
-            filtered_products = Product.objects.filter(Q(name__icontains=search)
-                                                       | Q(description__icontains=search),
-                                                       quantity__gt=0).distinct()
-            serializer = self.get_serializer(filtered_products, many=True)
-            return Response(serializer.data)
-        return Response({"error": "Invalid or missing search"}, status=status.HTTP_400_BAD_REQUEST)
-
-    # @action(detail=False, methods=['patch'], url_path='bulk-update-stock')
-    # def bulk_update_stock(self, request):
-    #     updates = request.data
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
