@@ -298,4 +298,3 @@ class PasswordResetView(APIView):
 
         # Return success response
         return Response({"message": "Password has been successfully updated.", "UTC_NOW":dt.utcnow().isoformat(), "Expiration date":dt.utcfromtimestamp(decoded_data.get("exp")).isoformat()}, status=status.HTTP_200_OK)
-

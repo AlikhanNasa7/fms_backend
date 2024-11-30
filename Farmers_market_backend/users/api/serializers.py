@@ -32,8 +32,6 @@ class ProfileSerializer(serializers.ModelSerializer):
 class FarmerSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
-    #rank = serializers.FloatField()
-
     class Meta:
         model = Farmer
         fields = "__all__"
@@ -87,6 +85,8 @@ class FarmerFilter(django_filters.FilterSet):
     class Meta:
         model = Farmer
         fields = ['years_of_experience', 'specialization', 'total_farm_area', 'average_performance']
+
+
 
 
 

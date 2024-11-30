@@ -2,6 +2,8 @@ from datetime import timedelta
 import os
 from dotenv import load_dotenv
 
+import os
+from dotenv import load_dotenv
 
 from pathlib import Path
 
