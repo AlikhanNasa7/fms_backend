@@ -5,6 +5,17 @@ from .serializers import ProductSerializer, CategorySerializer
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.db.models import Q
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsFarmerOwner
+
+class FarmerProductsList(ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated, IsFarmerOwner]
+
+    def get_queryset(self, request):
+        farmer_id = request.user.user_id
+        return Product.objects.filter(farm_id__farmer_id=farmer_id)
 
 
 class ProductViewSet(viewsets.ModelViewSet):
