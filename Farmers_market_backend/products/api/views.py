@@ -49,14 +49,14 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
     # Где это работает?
     # updating product partially
     # route = PATCH products/<id>
-    def partial_update(self, request, pk=None):
-
-        product = get_object_or_404(Product, pk=pk)
-        serializer = self.get_serializer(product, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # def partial_update(self, request, pk=None):
+    #
+    #     product = get_object_or_404(Product, pk=pk)
+    #     serializer = self.get_serializer(product, data=request.data, partial=True)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # deleting a product
     # route = DELETE products/<id>
