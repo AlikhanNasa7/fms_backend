@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     "corsheaders",
     'django_filters',
+    'storages'
 ]
 
 MIDDLEWARE = [
@@ -175,6 +176,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'farmers.market.swe@gmail.com'
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = 'farmers.market.swe@gmail.com'
+
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')

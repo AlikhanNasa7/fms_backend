@@ -15,6 +15,7 @@ from django.http import JsonResponse
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from django.conf import settings
 
 class FarmerProductsList(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
@@ -66,18 +67,18 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
 
         if image_files:
             image_urls = []
-
+            print(1341324123412123412431243)
             # Loop through the files and upload them to S3
             for image in image_files:
-                # Save the image to S3
                 file_name = f"product_images/{image.name}"  # You can customize this path
                 file_path = default_storage.save(file_name, ContentFile(image.read()))
-
-                # Get the URL of the uploaded file
-                image_url = default_storage.url(file_path)
+                print(file_path)
+                
+                image_url = f"{settings.MEDIA_URL}{file_path}"
                 image_urls.append(image_url)
 
             # Update the product with the URLs of the images
+            print(image_urls)
             product.image_urls = image_urls
             product.save()
 
