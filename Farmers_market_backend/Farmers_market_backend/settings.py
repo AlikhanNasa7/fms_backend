@@ -6,8 +6,6 @@ from dotenv import load_dotenv
 load_dotenv()
 from pathlib import Path
 
-
-load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -43,6 +41,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     "corsheaders",
     'django_filters',
+    'carts'
     'storages'
 ]
 
@@ -195,6 +194,6 @@ DEFAULT_FROM_EMAIL = 'farmers.market.swe@gmail.com'
 # MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_REGION_NAME}.amazonaws.com/'
 
 
-# AWS_S3_FILE_OVERWRITE = False 
-# AWS_DEFAULT_ACL = None 
+# AWS_S3_FILE_OVERWRITE = False
+# AWS_DEFAULT_ACL = None
 
