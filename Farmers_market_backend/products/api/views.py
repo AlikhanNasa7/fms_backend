@@ -9,12 +9,10 @@ from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsFarmerOwner
 
-
-class FarmerProductsList(viewsets.ModelViewSet):
+class FarmerProductsList(ListAPIView):
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated, IsFarmerOwner]
 
-    @action(detail=False, methods=['get'])
     def get_queryset(self, request):
         farmer_id = request.user.user_id
         return Product.objects.filter(farm_id__farmer_id=farmer_id)

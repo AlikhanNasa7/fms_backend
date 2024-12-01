@@ -1,4 +1,3 @@
-import pymysql
 from datetime import timedelta
 import os
 from dotenv import load_dotenv
@@ -43,6 +42,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'drf_spectacular',
     "corsheaders",
+    'django_filters',
+    'storages'
 ]
 
 MIDDLEWARE = [
@@ -146,7 +147,8 @@ REST_FRAMEWORK = {
     'SIMPLE_PERMISSION_CLASSES' : (
         'rest_framework.permissions.IsAuthenticated',
     ),
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
 
@@ -181,6 +183,12 @@ DEFAULT_FROM_EMAIL = 'farmers.market.swe@gmail.com'
 # AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
 # AWS_REGION_NAME = os.getenv('AWS_REGION_NAME')
 
+
+# AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+# AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+# AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+# AWS_REGION_NAME = os.getenv('AWS_REGION_NAME')
+
 # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 
@@ -190,7 +198,3 @@ DEFAULT_FROM_EMAIL = 'farmers.market.swe@gmail.com'
 # AWS_S3_FILE_OVERWRITE = False 
 # AWS_DEFAULT_ACL = None 
 
-
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
