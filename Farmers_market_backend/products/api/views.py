@@ -32,7 +32,7 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
     serializer_class = ProductSerializer
     filter_backends = (DjangoFilterBackend,)  # Enable Django filter
     filterset_class = ProductFilter  # Apply the ProductFilter
-    parser_classes = [MultiPartParser, FormParser]
+    #parser_classes = [MultiPartParser, FormParser]
     search_fields = ['name', 'description']
     ordering_fields = ['price_min', 'price_max', 'quantity_min', 'quantity_max', 'category', 'subcategory']
 
@@ -67,7 +67,6 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
 
         if image_files:
             image_urls = []
-            print(1341324123412123412431243)
             # Loop through the files and upload them to S3
             for image in image_files:
                 file_name = f"product_images/{image.name}"  # You can customize this path
@@ -97,10 +96,11 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
     # updating a product
     # route = PUT products/<id>
     def update(self, request, pk=None):
+        print(123412341234, request)
         instance = get_object_or_404(Product, pk=pk)
         category_name = request.data.get('category')
         subcategory_name = request.data.get('sub_category')
-
+        print(123412341234)
         category = Category.objects.get(name=category_name) if category_name else instance.category
         subcategory = SubCategory.objects.get(name=subcategory_name) if subcategory_name else instance.subcategory
 
@@ -112,7 +112,7 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
 
         # Get farm from farm_id
         farm = Farm.objects.get(farm_id=request.data.get('farm_id'))
-
+        print(farm, 132413241234)
         # Update the instance fields with the new data
         instance.name = request.data.get('name', instance.name)
         instance.farm_id = farm
@@ -122,8 +122,7 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
         instance.quantity = request.data.get('quantity', instance.quantity)
         instance.unit_name = request.data.get('unit_name', instance.unit_name)
         instance.description = request.data.get('description', instance.description)
-        instance.image_urls = request.data.get('image_urls', instance.image_urls)
-
+        print(instance)
         instance.save()
 
         # Serialize the updated product

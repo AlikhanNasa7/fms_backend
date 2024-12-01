@@ -3,7 +3,6 @@ from products.models import Product, Category, SubCategory
 import django_filters
 
 class ProductSerializer(serializers.ModelSerializer):
-    image_urls = serializers.ListField(child=serializers.ImageField(), required=False)
     farm_name = serializers.SerializerMethodField()
 
     class Meta:

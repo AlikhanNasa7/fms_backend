@@ -11,6 +11,9 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import action
+from django.conf import settings
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 class FarmViewSet(viewsets.ModelViewSet):
     queryset = Farm.objects.all()
@@ -22,12 +25,40 @@ class FarmViewSet(viewsets.ModelViewSet):
         
 
     def create(self, request):
-        data = request.data
-        serializer = self.get_serializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"success": "Farm created successfully"}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        farmer_id = request.user.user_id
+        farmer = Farmer.objects.get(user=farmer_id)
+        print(request.data)
+
+        farm = Farm(
+            farm_name=request.data.get('farm_name'),
+            description=request.data.get('description'),
+            farmer_id = farmer,
+            farm_size = request.data.get('farm_size'),
+            farm_location = request.data.get('farm_location')
+        )
+        farm.save()
+
+        image_files = self.request.FILES.getlist('image_urls')
+        print(image_files)
+
+        if image_files:
+            image_urls = []
+            for image in image_files:
+                file_name = f"product_images/{image.name}"
+                file_path = default_storage.save(file_name, ContentFile(image.read()))
+                print(file_path)
+                
+                image_url = f"{settings.MEDIA_URL}{file_path}"
+                image_urls.append(image_url)
+
+            print(image_urls)
+            farm.image_urls = image_urls
+            farm.save()
+
+
+        serializer = self.get_serializer(farm)
+        return Response(serializer.data, status=201)
 
     def retrieve(self, request, pk=None):
         farm = get_object_or_404(Farm, pk=pk)

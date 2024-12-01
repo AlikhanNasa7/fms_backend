@@ -191,3 +191,5 @@ DEFAULT_FROM_EMAIL = 'farmers.market.swe@gmail.com'
 # AWS_S3_FILE_OVERWRITE = False 
 # AWS_DEFAULT_ACL = None 
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
