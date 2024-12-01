@@ -36,6 +36,7 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
     search_fields = ['name', 'description']
     ordering_fields = ['price_min', 'price_max', 'quantity_min', 'quantity_max', 'category', 'subcategory']
 
+
     # creating a product
     # route = POST products/
     def create(self, request):

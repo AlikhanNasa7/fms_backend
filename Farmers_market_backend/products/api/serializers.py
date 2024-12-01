@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from products.models import Product, Category, SubCategory
 import django_filters
+from django.db import models
 
 class ProductSerializer(serializers.ModelSerializer):
     farm_name = serializers.SerializerMethodField()
@@ -23,26 +24,35 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ProductFilter(django_filters.FilterSet):
     # Price range filtering (greater than or equal to)
-    price_min = django_filters.NumberFilter(field_name='price', lookup_expr='gte')
-    price_max = django_filters.NumberFilter(field_name='price', lookup_expr='lte')
+    price_min = django_filters.NumberFilter(field_name='price', lookup_expr='gte', required=False)
+    price_max = django_filters.NumberFilter(field_name='price', lookup_expr='lte', required=False)
 
     # Quantity range filtering (greater than or equal to)
-    quantity_min = django_filters.NumberFilter(field_name='quantity', lookup_expr='gte')
-    quantity_max = django_filters.NumberFilter(field_name='quantity', lookup_expr='lte')
+    quantity_min = django_filters.NumberFilter(field_name='quantity', lookup_expr='gte', required=False)
+    quantity_max = django_filters.NumberFilter(field_name='quantity', lookup_expr='lte', required=False)
 
     # Filtering by category and subcategory using exact match
-    category = django_filters.ModelChoiceFilter(queryset=Category.objects.all(), field_name='category')
-    subcategory = django_filters.ModelChoiceFilter(queryset=SubCategory.objects.all(), field_name='subcategory')
+    category = django_filters.CharFilter(field_name='category__name', lookup_expr='icontains', required=False)
+    subcategory = django_filters.CharFilter(field_name='subcategory__name', lookup_expr='icontains', required=False)
+
 
     # # Filtering by availability (True or False)
-    is_available = django_filters.BooleanFilter(field_name='is_available')
+    is_available = django_filters.BooleanFilter(field_name='is_available', required=False)
 
     # Name search (case-insensitive match)
-    name = django_filters.CharFilter(field_name='name', lookup_expr='icontains')
+    search = django_filters.CharFilter(method='filter_search', required=False)
 
-    # Description search (case-insensitive match)
-    description = django_filters.CharFilter(field_name='description', lookup_expr='icontains')
+
 
     class Meta:
         model = Product
         fields = ['price_min', 'price_max', 'quantity_min', 'quantity_max', 'is_available', 'name', 'description', 'category', 'subcategory']
+
+
+    def filter_search(self, queryset, name, value):
+        if value:
+            return queryset.filter(
+                models.Q(name__icontains=value) | 
+                models.Q(description__icontains=value)
+            )
+        return queryset
