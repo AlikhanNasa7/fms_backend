@@ -17,7 +17,7 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 
 
-class FarmerProductsList(ListAPIView):
+class FarmerProductsList(viewsets.ReadOnlyModelViewSet):
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated, IsFarmerOwner]
 
