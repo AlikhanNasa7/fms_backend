@@ -1,6 +1,6 @@
 
 from django.urls import path, include
-from .views import ProductViewSet
+from .views import ProductViewSet, FarmerProductsList
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
