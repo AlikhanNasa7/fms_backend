@@ -9,6 +9,7 @@ router = DefaultRouter()
 # This will generate routes for ProductViewSet actions
 # /products/
 router.register(r'', ProductViewSet, basename='product')
+router.register(r'farmer', FarmerProductsList, basename='farmer-product')
 
 # Include the router-generated URLs
 urlpatterns = [
