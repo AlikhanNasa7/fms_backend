@@ -15,12 +15,9 @@ from django.http import JsonResponse
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
-<<<<<<< HEAD
-=======
 from django.conf import settings
 from market.api.serializers import FarmSerializer
 from users.api.serializers import FarmerSerializer
->>>>>>> alikhan
 
 
 class FarmerProductsList(viewsets.ReadOnlyModelViewSet):
