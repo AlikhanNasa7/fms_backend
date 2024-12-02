@@ -1,37 +1,9 @@
-from django.contrib import admin
+
 from .models import Farm, FarmRank, FarmAnalytics
-from django.utils.translation import gettext_lazy as _
 from django.contrib import admin
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils.html import format_html
-from .models import Farmer, CustomUser
-from .forms import FarmerRejectionForm
-from django.shortcuts import render
-
-# Custom filter for `is_active` status of the related `Farmer`
-# class FarmAdmin(admin.ModelAdmin):
-#     list_display = ('farm_name', 'farm_size', 'farm_location', 'is_active', 'farmer_name')  # Display these fields
-#     list_filter = ('is_active',)  # Filter by is_active status in the sidebar
-#     search_fields = ('farm_name', 'farm_location')  # Search fields
-#
-#     def farmer_name(self, obj):
-#         # Display the farmer's first name in the admin listing
-#         return obj.farmer_id.user.first_name
-#
-#     farmer_name.short_description = 'Farmer Name'
-#
-#     # Optional: Sorting by `is_active` so that active farms come first
-#     ordering = ('is_active',)
-#
-#
-# # Register the admin class
-# admin.site.register(Farm, FarmAdmin)
-
-
-# @admin.register(Farm)
-# class AdminFarm(admin.ModelAdmin):
-#     pass
 
 
 class FarmAdmin(admin.ModelAdmin):
