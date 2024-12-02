@@ -198,3 +198,5 @@ AWS_REGION_NAME = os.getenv('AWS_REGION_NAME')
 # AWS_S3_FILE_OVERWRITE = False
 # AWS_DEFAULT_ACL = None
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
