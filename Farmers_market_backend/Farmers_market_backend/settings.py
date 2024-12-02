@@ -25,6 +25,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
+    "corsheaders",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -33,15 +35,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',
     'market',
-    'chat',
     'products',
     'orders',
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_spectacular',
-    "corsheaders",
     'django_filters',
-    'storages'
+    'storages',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -62,6 +63,14 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'Farmers_market_backend.urls'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
+ASGI_APPLICATION = 'Farmers_market_backend.asgi.application'
+
 
 TEMPLATES = [
     {

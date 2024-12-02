@@ -7,19 +7,11 @@ class FarmSerializer(serializers.ModelSerializer):
     product_categories = serializers.SerializerMethodField()
     units = serializers.SerializerMethodField()
     products_count = serializers.SerializerMethodField()
+    image_urls = serializers.SerializerMethodField()
+
     class Meta:
         model = Farm
         fields = ['farm_id', 'farmer_id', 'farm_name', 'farm_size', 'farm_location', 'image_urls', 'farmer', 'product_categories', 'units', 'products_count', 'description']
-
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        if self.context.get('request').method in ['PUT', 'PATCH', 'POST']:
-            self.fields['image_urls'].required = False 
-            self.fields['farmer_id'].required = False
-        else:
-            self.fields['image_urls'].required = True
 
     def create(self, validated_data):
         farmer_id = self.context['request'].user.user_id
@@ -35,6 +27,12 @@ class FarmSerializer(serializers.ModelSerializer):
         
         instance.save()
         return instance
+    
+    def get_image_urls(self, obj):
+        image_urls = obj.image_urls
+        for i in range(len(image_urls)):
+            image_urls[i] = 'http://127.0.0.1:8000' + image_urls[i]
+        return image_urls
 
     def get_product_categories(self, obj):
         farm_categories = obj.products.values('category').distinct()

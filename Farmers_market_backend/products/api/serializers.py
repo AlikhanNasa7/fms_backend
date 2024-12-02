@@ -5,7 +5,7 @@ from django.db import models
 
 class ProductSerializer(serializers.ModelSerializer):
     farm_name = serializers.SerializerMethodField()
-
+    image_urls = serializers.SerializerMethodField()
     class Meta:
         model = Product
         fields = '__all__'
@@ -14,6 +14,12 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_farm_name(self, obj):
         farm_name = obj.farm_id.farm_name
         return farm_name
+
+    def get_image_urls(self, obj):
+        image_urls = obj.image_urls
+        for i in range(len(image_urls)):
+            image_urls[i] = 'http://127.0.0.1:8000' + image_urls[i]
+        return image_urls
 
 
 class CategorySerializer(serializers.ModelSerializer):

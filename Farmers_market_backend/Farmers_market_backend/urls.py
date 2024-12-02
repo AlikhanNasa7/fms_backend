@@ -15,4 +15,5 @@ urlpatterns = [
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('farms/', include('market.api.urls')),
     path('api/', include('users.api.urls')),
+    path('chat/', include('chat.api.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
