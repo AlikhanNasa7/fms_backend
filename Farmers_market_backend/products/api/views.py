@@ -23,7 +23,7 @@ from users.api.serializers import FarmerSerializer
 >>>>>>> alikhan
 
 
-class FarmerProductsList(ListAPIView):
+class FarmerProductsList(viewsets.ReadOnlyModelViewSet):
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated, IsFarmerOwner]
 
@@ -144,20 +144,6 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
         # Serialize the updated product
         serializer = ProductSerializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-    # updating product partially
-    # route = PATCH products/<id>
-    # def partial_update(self, request, pk=None):
-    #
-    #     product = get_object_or_404(Product, pk=pk)
-    #     serializer = self.get_serializer(product, data=request.data, partial=True)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # deleting a product
-    # route = DELETE products/<id>
 
     def destroy(self, request, pk=None):
 

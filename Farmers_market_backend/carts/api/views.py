@@ -59,6 +59,7 @@ class CartViewset(viewsets.GenericViewSet):
         """
         Remove an item from the authenticated user's cart.
         """
+
         cart_item_id = request.data.get('cart_item_id')
         cart_item = get_object_or_404(CartItem, pk=cart_item_id)
 

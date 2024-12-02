@@ -13,6 +13,10 @@ class Farm(models.Model):
     farm_location = models.TextField()
     image_urls = models.JSONField(default=list, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
+    rejection_reason = models.TextField(blank=True, null=True)  # This will hold the rejection reason, if any.
+    status = models.CharField(max_length=20, default='Pending', choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Rejected', 'Rejected')])
+    is_active = models.BooleanField(default=False)
+
     def __str__(self):
         return f"{self.farm_name}: {self.farm_location} ({self.farmer_id.user.first_name})"
     
