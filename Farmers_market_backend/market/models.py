@@ -11,7 +11,7 @@ class Farm(models.Model):
     farm_name = models.CharField(max_length=255)
     farm_size = models.FloatField()
     farm_location = models.TextField()
-    image_urls = models.JSONField(blank=True, null=True)
+    image_urls = models.JSONField(default=list, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     rejection_reason = models.TextField(blank=True, null=True)  # This will hold the rejection reason, if any.
     status = models.CharField(max_length=20, default='Pending', choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Rejected', 'Rejected')])

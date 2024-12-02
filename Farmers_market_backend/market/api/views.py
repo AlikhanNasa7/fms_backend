@@ -45,7 +45,7 @@ class FarmViewSet(viewsets.ModelViewSet):
         if image_files:
             image_urls = []
             for image in image_files:
-                file_name = f"product_images/{image.name}"
+                file_name = f"farmer_images/{image.name}"
                 file_path = default_storage.save(file_name, ContentFile(image.read()))
                 print(file_path)
                 

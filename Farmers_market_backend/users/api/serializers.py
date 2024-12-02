@@ -14,11 +14,11 @@ import django_filters
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta: 
         model = CustomUser
-        fields = ['username', 'email', 'role']
+        fields = ['username', 'email', 'role', 'image']
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-
+        
         if instance.role == 'Farmer':
             representation['profile'] = FarmerSerializer(instance.farmer_profile).data
         elif instance.role == 'Buyer':
@@ -32,6 +32,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class FarmerSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
+    image = serializers.SerializerMethodField()
     #rank = serializers.FloatField()
 
     class Meta:
@@ -41,6 +42,13 @@ class FarmerSerializer(serializers.ModelSerializer):
     def get_rank(self, obj):
         user = obj.pk
         farms = Farm.obj
+
+    def get_image(self, obj):
+        user_id = obj.user.user_id
+        user = CustomUser.objects.get(pk=user_id)
+        image = user.image
+        image = str('http://127.0.0.1:8000/media/') + str(image)
+        return image
 
 
 

@@ -9,6 +9,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name="logout"),
     path("profile/", ProfileViewset.as_view({'get': 'retrieve', 'put': 'update'}), name="profile-details"),
     path("farmers/", FarmersViewset.as_view({'get': 'list'}), name="farmers-details"),
+    path("farmers/<uuid:pk>/", FarmersViewset.as_view({'get': 'retrieve'}), name="farmers-details"),
     path("buyers/", BuyerViewset.as_view({'get': 'list'}), name="buyer-details"),
     path('forgot-password/', PasswordResetRequestView.as_view(), name='forgot-password-request'),
     path('reset-password/<str:token>/', PasswordResetView.as_view(), name='reset-password'),

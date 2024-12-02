@@ -43,7 +43,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
-    image = models.ImageField(blank=True, upload_to='images/users/')
+    image = models.ImageField(blank=True, upload_to='users/')
     password = models.CharField(max_length=255, null=False)
 
 
