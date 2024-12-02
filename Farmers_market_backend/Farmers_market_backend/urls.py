@@ -17,3 +17,5 @@ urlpatterns = [
     path('api/', include('users.api.urls')),
     path('carts/', include('carts.api.urls')),
 ]
+    path('chat/', include('chat.api.urls')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

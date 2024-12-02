@@ -25,8 +25,10 @@ import datetime
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.renderers import JSONRenderer
 from rest_framework_simplejwt.tokens import RefreshToken
-
-
+from market.api.serializers import FarmSerializer
+from products.api.serializers import ProductSerializer
+from products.models import Product
+from rest_framework_simplejwt.tokens import AccessToken
 
 SECRET_KEY = settings.SECRET_KEY
 class MyTokenObtainSerializer(TokenObtainPairSerializer):
@@ -51,15 +53,21 @@ class MyTokenObtainView(TokenObtainPairView):
 
         refresh_token = serializer.validated_data["refresh"]
         access_token = serializer.validated_data["access"]
+        access_payload = AccessToken(access_token).payload
+        user_id = access_payload.get('user_id')
+        user = CustomUser.objects.get(pk=user_id)
 
-        response = Response({"success": "Login successful", "access": access_token}, status=status.HTTP_200_OK)
-        response.set_cookie(
-            key="access_token",
-            value=access_token,
-            httponly=True,
-            secure=True,
-            samesite='None',
-        )
+        print(1341234)
+
+        response = Response({
+            "success": "Login successful", 
+            "access": access_token, 
+            "user": {
+                "id": user.pk,
+                "username": user.username,
+                "email": user.email,
+            }
+        }, status=status.HTTP_200_OK)
         response.set_cookie(
             key="refresh_token",
             value=refresh_token,
@@ -82,7 +90,20 @@ class CustomTokenRefreshView(TokenRefreshView):
             access_token = str(refresh.access_token)
             refresh_token = str(refresh)
 
-            response = JsonResponse({'access': access_token})
+            access_payload = AccessToken(access_token).payload
+            user_id = access_payload.get('user_id')
+            user = CustomUser.objects.get(id=user_id)
+
+            response = JsonResponse({
+                "success": "Refreshed token", 
+                "access": access_token, 
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                }
+            }, status=status.HTTP_200_OK)
+            
             response.set_cookie(
                 key="refresh_token",
                 value=refresh_token,
@@ -179,7 +200,7 @@ class ProfileViewset(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-class FarmersViewset(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class FarmersViewset(viewsets.ModelViewSet):
     queryset = Farmer.objects.all()
     serializer_class = FarmerSerializer
     filter_backends = (DjangoFilterBackend,)  # Enable Django filter
@@ -188,6 +209,19 @@ class FarmersViewset(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
     ordering_fields = ['years_of_experience', 'total_farm_area', 'average_performance']
     # renderer_classes = [JSONRenderer]
 
+    def retrieve(self, request, pk=None):
+        print(12341243123412341243, pk)
+        farmer = Farmer.objects.get(pk=pk)
+        farmer_serializer = FarmerSerializer(farmer)
+        farms = farmer.farms
+        farms_serializer = FarmSerializer(farms, many=True)
+        last_10_products = Product.objects.filter(farm_id__farmer_id=farmer).order_by('-created_at')[:10]
+        product_serializer = ProductSerializer(last_10_products, many=True)
+        return Response({
+            'last_products': product_serializer.data, 
+            'farms': farms_serializer.data, 
+            'farmer_details': farmer_serializer.data
+        })
 class BuyerViewset(mixins.ListModelMixin, 
                    mixins.RetrieveModelMixin, 
                    viewsets.GenericViewSet):

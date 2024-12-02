@@ -15,6 +15,12 @@ from django.http import JsonResponse
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+<<<<<<< HEAD
+=======
+from django.conf import settings
+from market.api.serializers import FarmSerializer
+from users.api.serializers import FarmerSerializer
+>>>>>>> alikhan
 
 
 class FarmerProductsList(ListAPIView):
@@ -38,6 +44,7 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
 
     # creating a product
     # route = POST products/
+
     def create(self, request):
         category_name = request.data.get('category')
         subcategory_name = request.data.get('sub_category')
@@ -91,8 +98,16 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
     # route = GET products/<id>
     def retrieve(self, request, pk=None, *args, **kwargs):
         product = get_object_or_404(Product, pk=pk)
-        serializer = self.get_serializer(product)
-        return Response(serializer.data)
+        farm = product.farm_id
+        farmer = farm.farmer_id
+        product_serializer = self.get_serializer(product)
+        farm_serializer = FarmSerializer(farm)
+        farmer_serializer = FarmerSerializer(farmer)
+        return Response({
+            'product_details': product_serializer.data, 
+            'farm_details': farm_serializer.data, 
+            'farmer_details': farmer_serializer.data
+        })
 
     # updating a product
     # route = PUT products/<id>
