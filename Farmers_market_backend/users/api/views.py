@@ -49,6 +49,7 @@ class MyTokenObtainView(TokenObtainPairView):
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
+        print(request.data)
         serializer.is_valid(raise_exception=True)
 
         refresh_token = serializer.validated_data["refresh"]
