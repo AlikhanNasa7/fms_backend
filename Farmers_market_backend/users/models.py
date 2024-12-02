@@ -11,6 +11,12 @@ class UserManager(BaseUserManager):
         user = self.model(email=email, **extra)
         user.set_password(password)
         user.save(using=self._db)
+
+        if user.role == 'Admin':
+            user.is_staff = True
+            user.is_superuser = True
+            user.save(using=self._db)
+
         if user:
             return user
 
@@ -23,6 +29,7 @@ class UserManager(BaseUserManager):
         if extra.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True")
         return self.create_user(email, password, **extra)
+
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
@@ -55,18 +62,25 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 
-# class Admin(models.Model):
-#     user = models.OneToOneField(
-#         CustomUser,
-#         on_delete=models.CASCADE,
-#         primary_key=True,
-#     )
-#     permissions = models.JSONField(blank=True, null=True)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
+class Admin(models.Model):
+    user = models.OneToOneField(
+        CustomUser,
+        on_delete=models.CASCADE,
+        primary_key=True,
+    )
+    permissions = models.JSONField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-#     def __str__(self):
-#         return f"Admin: {self.user.username}"
+    def __str__(self):
+        return f"Admin: {self.user.username}"
+
+    def assign_permissions(self):
+        admin_group, created = Group.objects.get_or_create(name='Admin')
+        permissions = Permission.objects.all()  # Get all available permissions
+        admin_group.permissions.set(permissions)
+        self.user.groups.add(admin_group)
+
 
 class Farmer(models.Model):
     user = models.OneToOneField('users.CustomUser', models.CASCADE, primary_key=True, related_name="farmer_profile")
@@ -77,6 +91,8 @@ class Farmer(models.Model):
     average_performance = models.FloatField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
 
     def __str__(self):
         return f"{self.user.email}"

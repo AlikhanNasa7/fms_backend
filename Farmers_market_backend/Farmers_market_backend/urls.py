@@ -4,7 +4,6 @@ from rest_framework import permissions
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include('users.api.urls')),

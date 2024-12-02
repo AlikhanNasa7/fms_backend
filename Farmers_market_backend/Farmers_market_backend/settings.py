@@ -67,7 +67,7 @@ ROOT_URLCONF = 'Farmers_market_backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
+        'DIRS': [BASE_DIR / 'market']
         ,
         'APP_DIRS': True,
         'OPTIONS': {
