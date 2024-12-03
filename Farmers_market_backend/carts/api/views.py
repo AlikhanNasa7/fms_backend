@@ -66,7 +66,7 @@ class CartViewset(viewsets.GenericViewSet):
 
 
     @action(detail=False, methods=['put'], url_path='retract-item')
-    def retract_item(self, request):
+    def retract_cart_item(self, request):
         """
         Remove an item from the authenticated user's cart.
         """
