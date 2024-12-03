@@ -2,6 +2,8 @@ from rest_framework import serializers
 from products.models import Product, Category, SubCategory
 import django_filters
 from django.db import models
+from django.shortcuts import get_object_or_404
+from market.models import Farm
 
 class ProductSerializer(serializers.ModelSerializer):
     farm_name = serializers.SerializerMethodField()
@@ -12,8 +14,8 @@ class ProductSerializer(serializers.ModelSerializer):
         read_only_fields = ['product_id', 'updated_at']
 
     def get_farm_name(self, obj):
-        farm_name = obj.farm_id.farm_name
-        return farm_name
+        print(obj)
+        return obj.farm.farm_name
 
     def get_image_urls(self, obj):
         image_urls = obj.image_urls

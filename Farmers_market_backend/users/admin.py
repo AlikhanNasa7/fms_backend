@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CustomUser, Farmer, Buyer
+from .models import CustomUser, Farmer, Buyer, Admin
 from django.contrib.auth.admin import UserAdmin
 from .adminforms import CustomUserChangeForm, CustomUserCreationForm
 
@@ -31,6 +31,14 @@ class CustomUserAdmin(UserAdmin):
     search_fields = ('email', 'username', 'first_name', 'last_name')
     ordering = ('email',)
 
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+
+        # If the user is an admin, ensure they have all permissions
+        if obj.role == 'Admin':
+            admin_profile, created = Admin.objects.get_or_create(user=obj)
+            admin_profile.assign_permissions()  # Assign full permissions
+
 
 
 @admin.register(Farmer)
@@ -41,7 +49,7 @@ class FarmerAdmin(admin.ModelAdmin):
 class BuyerAdmin(admin.ModelAdmin):
     pass
 
-# @admin.register(Admin)
-# class AdminAdmin(admin.ModelAdmin):
-#     pass
+@admin.register(Admin)
+class AdminAdmin(admin.ModelAdmin):
+    pass
 

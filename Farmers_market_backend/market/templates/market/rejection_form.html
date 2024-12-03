@@ -1,0 +1,9 @@
+
+{% block content %}
+  <h1>Rejection Reason</h1>
+  <form action = "{% url 'market:reject' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit Rejection</button>
+  </form>
+{% endblock %}

@@ -1,13 +1,8 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from orders.models import Order
+from rest_framework import serializers
 
-
-class OrderSerializer(ModelSerializer):
-    total_price = SerializerMethodField()
-
+class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-    
-    def get_total_price(self, obj):
-        order_items = obj.items
-        total_price = 0
+        fields = [ 'status', 'buyer_id', 'created_at']

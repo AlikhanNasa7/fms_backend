@@ -12,7 +12,7 @@ class Order(models.Model):
         max_length=36
     )
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    buyer_id = models.ForeignKey(Buyer, models.DO_NOTHING)
+    buyer = models.ForeignKey(Buyer, models.DO_NOTHING)
     status = models.CharField(max_length=20, choices=[
         ('pending', 'Pending'),
         ('completed', 'Completed'),
@@ -21,21 +21,17 @@ class Order(models.Model):
 
 
 
+
 class OrderItem(models.Model):
-    order_item_id = models.AutoField(primary_key=True)
-    order_id = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
-    product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
-    unit_name = models.CharField(max_length=20, choices=[
-        ('kg', 'kg'),
-        ('pcs', 'pcs'),
-        ('litres', 'litres')
-    ])
+    order_item_id = models.UUIDField(primary_key=True, default=uuid.uuid4, max_length=36)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
-    farm_id = models.ForeignKey(Farm, on_delete=models.DO_NOTHING, related_name="order_items", default=1)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    farm = models.ForeignKey(Farm, on_delete=models.DO_NOTHING, related_name="order_items", default=1)
 
     def get_total_price(self):
-        return self.quantity * self.price
+        product = Product.objects.get(id=self.product_id)
+        return self.quantity * product.price
 
 
 class Delivery(models.Model):

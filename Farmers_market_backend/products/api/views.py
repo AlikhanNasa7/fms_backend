@@ -19,14 +19,14 @@ from django.conf import settings
 from market.api.serializers import FarmSerializer
 from users.api.serializers import FarmerSerializer
 
-class FarmerProductsList(viewsets.ModelViewSet):
+
+class FarmerProductsList(viewsets.ReadOnlyModelViewSet):
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated, IsFarmerOwner]
 
     def get_queryset(self, request):
         farmer_id = request.user.user_id
         return Product.objects.filter(farm_id__farmer_id=farmer_id)
-
 
 
 class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -71,17 +71,18 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
 
         if image_files:
             image_urls = []
+
             # Loop through the files and upload them to S3
             for image in image_files:
+                # Save the image to S3
                 file_name = f"product_images/{image.name}"  # You can customize this path
                 file_path = default_storage.save(file_name, ContentFile(image.read()))
-                print(file_path)
-                
-                image_url = f"{settings.MEDIA_URL}{file_path}"
+
+                # Get the URL of the uploaded file
+                image_url = default_storage.url(file_path)
                 image_urls.append(image_url)
 
             # Update the product with the URLs of the images
-            print(image_urls)
             product.image_urls = image_urls
             product.save()
 
@@ -141,25 +142,11 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
         serializer = ProductSerializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # Где это работает?
-    # updating product partially
-    # route = PATCH products/<id>
-    # def partial_update(self, request, pk=None):
-    #
-    #     product = get_object_or_404(Product, pk=pk)
-    #     serializer = self.get_serializer(product, data=request.data, partial=True)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # deleting a product
-    # route = DELETE products/<id>
     def destroy(self, request, pk=None):
 
         product = get_object_or_404(Product, pk=pk)
         product.delete()
-        return Response({"success": "Product was deleted succesfully"}, status=status.HTTP_200_OK)
+        return Response({"success": "Product was deleted succesfully"}, status=status.HTTP_202_ACCEPTED)
 
     @action(detail=True, methods=['patch'], url_path='update-stock')
     def update_stock(self, request, pk=None):
@@ -179,14 +166,14 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
         low_stock_products = Product.objects.filter(quantity__lte=threshold)
         serializer = self.get_serializer(low_stock_products, many=True)
         return Response(serializer.data)
-    
+
     @action(detail=False, methods=['get'], url_path='farmer')
     def get_farmer_farms(self, request):
         farmer_id = self.request.user.user_id
-        products =  Product.objects.filter(farm_id__farmer_id=farmer_id)
+        products = Product.objects.filter(farm_id__farmer_id=farmer_id)
         serializer = self.get_serializer(products, many=True)
         return Response(serializer.data)
-    
+
     @action(detail=False, methods=['get'], url_path='create-product')
     def farmer_farms_names(self, request):
         farmer = request.user.user_id

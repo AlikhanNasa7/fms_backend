@@ -49,6 +49,7 @@ class MyTokenObtainView(TokenObtainPairView):
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
+        print(request.data)
         serializer.is_valid(raise_exception=True)
 
         refresh_token = serializer.validated_data["refresh"]
@@ -58,16 +59,33 @@ class MyTokenObtainView(TokenObtainPairView):
         user = CustomUser.objects.get(pk=user_id)
 
         print(1341234)
-
-        response = Response({
-            "success": "Login successful", 
-            "access": access_token, 
-            "user": {
-                "id": user.pk,
-                "username": user.username,
-                "email": user.email,
-            }
-        }, status=status.HTTP_200_OK)
+        has_image = False
+        if user.image:
+            has_image = True
+        if has_image:
+            image = "http://127.0.0.1:8000" + str(user.image.url)
+            response = Response({
+                "success": "Login successful", 
+                "access": access_token, 
+                "user": {
+                    "id": user.pk,
+                    "username": user.username,
+                    "email": user.email,
+                    "role": user.role,
+                    "image": image
+                }
+            }, status=status.HTTP_200_OK)
+        else:
+            response = Response({
+                "success": "Login successful", 
+                "access": access_token, 
+                "user": {
+                    "id": user.pk,
+                    "username": user.username,
+                    "email": user.email,
+                    "role": user.role,
+                }
+            }, status=status.HTTP_200_OK)
         response.set_cookie(
             key="refresh_token",
             value=refresh_token,
