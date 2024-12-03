@@ -18,7 +18,8 @@ from django.core.files.base import ContentFile
 from django.conf import settings
 from market.api.serializers import FarmSerializer
 from users.api.serializers import FarmerSerializer
-
+from users.models import Buyer
+from carts.models import CartItem, Cart
 
 class FarmerProductsList(viewsets.ReadOnlyModelViewSet):
     serializer_class = ProductSerializer
@@ -95,16 +96,28 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
     # route = GET products/<id>
     def retrieve(self, request, pk=None, *args, **kwargs):
         product = get_object_or_404(Product, pk=pk)
-        farm = product.farm_id
+        farm = product.farm
         farmer = farm.farmer_id
         product_serializer = self.get_serializer(product)
         farm_serializer = FarmSerializer(farm)
         farmer_serializer = FarmerSerializer(farmer)
-        return Response({
+
+        response_data = {
             'product_details': product_serializer.data, 
             'farm_details': farm_serializer.data, 
-            'farmer_details': farmer_serializer.data
-        })
+            'farmer_details': farmer_serializer.data,
+            'quantity_in_cart': 0
+        }
+
+        buyer = Buyer.objects.get(pk=request.user.user_id)
+        try: 
+            cart_item = CartItem.objects.get(cart__buyer=buyer, product=product)
+        except CartItem.DoesNotExist:
+            return Response(response_data)
+
+        response_data['quantity_in_cart'] = cart_item.quantity
+
+        return Response(response_data)
 
     # updating a product
     # route = PUT products/<id>

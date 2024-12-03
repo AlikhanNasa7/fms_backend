@@ -89,7 +89,7 @@ TEMPLATES = [
         },
     },
 ]
-
+APPEND_SLASH=False
 WSGI_APPLICATION = 'Farmers_market_backend.wsgi.application'
 
 

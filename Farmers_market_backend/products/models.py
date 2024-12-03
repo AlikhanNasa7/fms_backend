@@ -16,7 +16,7 @@ class SubCategory(models.Model):
 
 class Product(models.Model):
     product_id = models.UUIDField(primary_key=True, default=uuid.uuid4, max_length=36)
-    farm_id = models.ForeignKey(Farm, models.CASCADE, related_name="products")
+    farm = models.ForeignKey(Farm, models.CASCADE, related_name="products")
     category = models.ForeignKey(Category, models.DO_NOTHING, related_name="products")
     subcategory = models.ForeignKey(SubCategory, models.DO_NOTHING, related_name="products")
     name = models.CharField(max_length=255)          
@@ -35,4 +35,4 @@ class Product(models.Model):
 
 
     def __str__(self):
-        return f"{self.name}: {self.farm_id.farm_name}"
+        return f"{self.name}: {self.farm.farm_name}"

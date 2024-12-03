@@ -13,10 +13,10 @@ class Cart(models.Model):
 
 class CartItem(models.Model):
     cart_item_id = models.UUIDField(primary_key=True, default=uuid.uuid4, max_length=36)
-    cart_id = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="items")
-    product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="items")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
-    farm_id = models.ForeignKey(Farm, on_delete=models.DO_NOTHING, related_name="cart_items", default=1)
+    farm = models.ForeignKey(Farm, on_delete=models.DO_NOTHING, related_name="cart_items", default=1)
 
     def get_total_price(self):
         return self.quantity * self.product_id.price

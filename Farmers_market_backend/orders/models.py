@@ -12,7 +12,7 @@ class Order(models.Model):
         max_length=36
     )
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    buyer_id = models.ForeignKey(Buyer, models.DO_NOTHING)
+    buyer = models.ForeignKey(Buyer, models.DO_NOTHING)
     status = models.CharField(max_length=20, choices=[
         ('pending', 'Pending'),
         ('completed', 'Completed'),
@@ -24,10 +24,10 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order_item_id = models.UUIDField(primary_key=True, default=uuid.uuid4, max_length=36)
-    order_id = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
-    product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
-    farm_id = models.ForeignKey(Farm, on_delete=models.DO_NOTHING, related_name="order_items", default=1)
+    farm = models.ForeignKey(Farm, on_delete=models.DO_NOTHING, related_name="order_items", default=1)
 
     def get_total_price(self):
         product = Product.objects.get(id=self.product_id)
