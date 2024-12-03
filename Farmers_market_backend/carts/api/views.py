@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from carts.models import Cart, CartItem
 
 from products.models import Product
-
+from rest_framework import status
 
 class CartViewset(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
@@ -53,8 +53,8 @@ class CartViewset(viewsets.GenericViewSet):
 
         farm_id = product.farm_id
         cart_item, created = CartItem.objects.get_or_create(
-            cart_id=cart,
-            product_id=product,
+            cart=cart,
+            product=Product.objects.get(pk=product.product_id),
             defaults={'quantity': quantity, 'farm_id': farm_id}
         )
 
@@ -65,8 +65,8 @@ class CartViewset(viewsets.GenericViewSet):
         return Response(CartItemSerializer(cart_item).data)
 
 
-    @action(detail=False, methods=['put'], url_path='remove-item')
-    def remove_item(self, request):
+    @action(detail=False, methods=['put'], url_path='retract-item')
+    def retract_item(self, request):
         """
         Remove an item from the authenticated user's cart.
         """
@@ -81,3 +81,15 @@ class CartViewset(viewsets.GenericViewSet):
             cart_item.save()
 
         return Response(CartItemSerializer(cart_item).data)
+    
+    @action(detail=True, methods=['delete'], url_path='delete-item')
+    def delete_item(self, request, pk=None):
+        """
+        Remove an item from the authenticated user's cart.
+        """
+
+        cart_item = get_object_or_404(CartItem, pk=pk)
+
+        cart_item.delete()
+
+        return Response({"message": "Deleted Successfully"}, status=status.HTTP_202_ACCEPTED)

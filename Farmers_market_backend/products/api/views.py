@@ -95,7 +95,7 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
     # route = GET products/<id>
     def retrieve(self, request, pk=None, *args, **kwargs):
         product = get_object_or_404(Product, pk=pk)
-        farm = product.farm_id
+        farm = product.farm
         farmer = farm.farmer_id
         product_serializer = self.get_serializer(product)
         farm_serializer = FarmSerializer(farm)
