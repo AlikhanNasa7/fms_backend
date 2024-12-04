@@ -6,8 +6,8 @@ from .models import OrderItem, Order, Delivery
 def create_delivery(sender, instance, created, **kwargs):
     if created:
         # Construct the primary key for the Delivery
-        delivery_pk = f'{instance.order_id.pk}_{instance.farm_id.pk}'
-
+        delivery_pk = f'{instance.order.pk}_{instance.farm.pk}'
+        print('Delivery_pk', delivery_pk)
         # Use get_or_create to avoid DoesNotExist error
         delivery, delivery_created = Delivery.objects.get_or_create(
             pk=delivery_pk,
