@@ -13,13 +13,15 @@ from orders.api.serializers import OrderSerializer, OrderItemSerializer
 from orders.models import Order, OrderItem, Delivery
 
 from products.models import Product
-from users.models import Buyer
+from users.models import Buyer, CustomUser, Farmer
 from rest_framework import status
 
 
 class OrderViewset(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = OrderSerializer
+
+
     
     def retrieve(self, request, pk=None):
         user = request.user
@@ -47,19 +49,29 @@ class OrderViewset(viewsets.GenericViewSet):
         }
 
         return Response(data, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['get'], url_path='farm-orderitems')
+    def get_farm_orderitems(self, request):
+        user = request.user
+        
+        order_items = OrderItem.objects.filter(farm__farmer_id=user.user_id)
+
+        order_items_serializer = OrderItemSerializer(order_items, many=True)
+
+        return Response(order_items_serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'], url_path='get')
     def get(self, request):
         user = request.user
         print(user)
-        buyer = Buyer.objects.get(user=user)
+        if user.role=='Buyer':
+            buyer = Buyer.objects.get(user=user)
 
-        orders = Order.objects.filter(buyer=buyer).order_by('-created_at')
+            orders = Order.objects.filter(buyer=buyer).order_by('-created_at')
 
-        orders_serializer = OrderSerializer(orders, many=True)
+            orders_serializer = OrderSerializer(orders, many=True)
 
-        return Response(orders_serializer.data, status=status.HTTP_200_OK)
-
+            return Response(orders_serializer.data, status=status.HTTP_200_OK)
 
 
     @action(detail=False, methods=['post'], url_path='create-order')
@@ -82,6 +94,9 @@ class OrderViewset(viewsets.GenericViewSet):
                 quantity=item.quantity,
                 farm=farm_id,
             )
+            # Decreasing in product quantity from farmer 
+            product.quantity-=item.quantity
+            product.save()
             item.delete()
 
 

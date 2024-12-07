@@ -10,7 +10,7 @@ class CustomUserAdmin(UserAdmin):
     model = CustomUser
 
     list_display = ('email', 'username', 'first_name', 'last_name', 'is_active', 'role','is_staff', 'created_at')
-    list_filter = ('is_staff', 'is_active', 'created_at')
+    list_filter = ('is_staff', 'is_active', 'created_at', 'role')
 
     fieldsets = (
         (None, {'fields': ('email', 'password')}),

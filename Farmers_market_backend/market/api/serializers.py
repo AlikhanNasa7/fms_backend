@@ -30,8 +30,9 @@ class FarmSerializer(serializers.ModelSerializer):
     
     def get_image_urls(self, obj):
         image_urls = obj.image_urls
-        for i in range(len(image_urls)):
-            image_urls[i] = 'http://127.0.0.1:8000' + image_urls[i]
+        if image_urls != None:
+            for i in range(len(image_urls)):
+                image_urls[i] = 'http://127.0.0.1:8000' + image_urls[i]
         return image_urls
 
     def get_product_categories(self, obj):

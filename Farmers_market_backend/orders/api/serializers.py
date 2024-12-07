@@ -21,6 +21,11 @@ class OrderItemSerializer(serializers.ModelSerializer):
     product_category = serializers.CharField(source='product.category.name')
     product_total_price = serializers.SerializerMethodField()
     product_description = serializers.CharField(source='product.description')
+    farm_image = serializers.SerializerMethodField()
+    farm_name = serializers.CharField(source='farm.farm_name')
+    product_description = serializers.CharField(source='farm.description')
+    buyer = serializers.CharField(source='order.buyer.user.email')
+    created_at = serializers.DateTimeField(source='order.created_at')
 
     class Meta:
         model = OrderItem
@@ -32,6 +37,13 @@ class OrderItemSerializer(serializers.ModelSerializer):
         if "http" in obj.product.image_urls[0]:
             return obj.product.image_urls[0]
         return "http://127.0.0.1:8000" + obj.product.image_urls[0]
+    
+    def get_farm_image(self, obj):
+        if not obj.farm.image_urls or not obj.farm.image_urls[0]:
+            return None
+        if "http" in obj.farm.image_urls[0]:
+            return obj.farm.image_urls[0]
+        return "http://127.0.0.1:8000" + obj.farm.image_urls[0]
 
     def get_product_total_price(self, obj):
         return obj.product.price * obj.quantity
