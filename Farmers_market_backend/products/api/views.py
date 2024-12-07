@@ -57,7 +57,7 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
         print(request.data.get('image_urls'))
         product = Product(
             name=request.data.get('name'),
-            farm_id=farm,
+            farm=farm,
             category=category,
             subcategory=subcategory,
             price=request.data.get('price'),
@@ -108,8 +108,12 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
             'farmer_details': farmer_serializer.data,
             'quantity_in_cart': 0
         }
-
-        buyer = Buyer.objects.get(pk=request.user.user_id)
+        
+        try:
+            buyer = Buyer.objects.get(pk=request.user.user_id)
+        except:
+            return Response(response_data)
+         
         try: 
             cart_item = CartItem.objects.get(cart__buyer=buyer, product=product)
         except CartItem.DoesNotExist:
@@ -194,13 +198,17 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
         farms = farmer_farms.values('farm_id', 'farm_name')
         farms_list = list(farms)
 
-        products = Product.objects.values('category', 'subcategory').distinct()
+        categories_all = Category.objects.all()
+        subcategories_all = SubCategory.objects.all()
+
         categories = dict()
 
-        for product in products:
-            if product['category'] not in categories:
-                categories[product['category']] = []
-            categories[product['category']].append(product['subcategory'])
+        for category in categories_all:
+            if category in categories_all:
+                categories[category.name] = []
+            for sub_category in SubCategory.objects.filter(category=category):
+                categories[category.name].append(sub_category.name)
+        print(categories)
 
         return JsonResponse({"farms": farms_list, 'categories': categories})
 

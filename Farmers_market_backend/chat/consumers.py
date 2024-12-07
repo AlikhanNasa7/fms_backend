@@ -44,7 +44,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         """ Receive message from WebSocket """
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
-
         # Save message to the database
         await sync_to_async(self.save_message)(message)
 
@@ -61,11 +60,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def save_message(self, message):
         """ Save the message to the database """
         chat = ChatRoom.objects.get(pk=self.chat_room_id)
-        print(self.user)
         #user = CustomUser.objects.get(pk=token['user_id'])
         Message.objects.create(
             chat_room=chat,
-            sender=user,
+            sender=self.user,
             content=message
         )
 

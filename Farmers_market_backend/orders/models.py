@@ -19,6 +19,16 @@ class Order(models.Model):
         ('cancelled', 'Cancelled')
     ])
 
+    def get_total_price(self):
+        order_items = OrderItem.objects.filter(order=self)
+        total = 0
+        for order in order_items:
+            total += order.get_total_price()
+        
+        return total
+
+
+
 
 
 
@@ -28,9 +38,15 @@ class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     farm = models.ForeignKey(Farm, on_delete=models.DO_NOTHING, related_name="order_items", default=1)
-
+    STATUS = (
+        ('paid', 'paid'),
+        ('packed','packed'),
+        ('on a way', 'on a way'),
+        ('delivered', 'delivered')
+    )
+    status = models.CharField(max_length=10, blank=True, null=True, choices=STATUS, default='paid')
     def get_total_price(self):
-        product = Product.objects.get(id=self.product_id)
+        product = Product.objects.get(pk=self.product_id)
         return self.quantity * product.price
 
 

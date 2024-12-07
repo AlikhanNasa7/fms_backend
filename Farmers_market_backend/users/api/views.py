@@ -228,7 +228,6 @@ class FarmersViewset(viewsets.ModelViewSet):
     # renderer_classes = [JSONRenderer]
 
     def retrieve(self, request, pk=None):
-        print(12341243123412341243, pk)
         farmer = Farmer.objects.get(pk=pk)
         farmer_serializer = FarmerSerializer(farmer)
         farms = farmer.farms

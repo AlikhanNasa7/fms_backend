@@ -52,6 +52,11 @@ class CartViewset(viewsets.GenericViewSet):
         product = get_object_or_404(Product, pk=product_id)
 
         farm_id = product.farm_id
+
+        if quantity > product.quantity:
+            raise ValueError(f"Available amount is {product.quantity}, but you are trying to add to cart {quantity}")
+        
+
         cart_item, created = CartItem.objects.get_or_create(
             cart=cart,
             product=Product.objects.get(pk=product.product_id),
@@ -59,6 +64,9 @@ class CartViewset(viewsets.GenericViewSet):
         )
 
         if not created:
+            if quantity + cart_item.quantity > product.quantity:
+                raise ValueError(f"Available amount is {product.quantity + cart_item.quantity}, but you are trying to add to cart {quantity}")
+            
             cart_item.quantity += quantity
             cart_item.save()
 
